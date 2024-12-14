@@ -42,16 +42,16 @@ This project is an Express application with TypeScript,integrating MongoDB with 
 - MongoDB- local or cloud 
 
 # installation 
-1. Clone the Repository 
-https://github.com/alamshuvo/assignment-2-L2.git
+# 1. Clone the Repository 
+    1.https://github.com/alamshuvo/assignment-2-L2.git
 
-2. Install Dependencies 
- npm install 
+# 2. Install Dependencies 
+    1.npm install 
 
-3. Set up Environment variables create a .env file in the root directory and include the following 
-port=5000;
-MONGO_URI=mongodb://localhost:27017
+# 3. Set up Environment variables create a .env file in the root directory and include the following 
+  1.port=5000;
+  2.MONGO_URI=mongodb://localhost:27017
 
-4. Run the application start the server in development mode 
-npm run dev 
+# 4. Run the application start the server in development mode 
+ 1.npm run dev 
 
