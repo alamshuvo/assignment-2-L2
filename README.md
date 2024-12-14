@@ -29,7 +29,7 @@ This project is an Express application with TypeScript,integrating MongoDB with 
 - its global error through by express.js next function i access global error 
 
 # Techonology used 
-      1. Backend : Node.js,Express.js,TypeScript
+      1. Backend : Node.js,Express.js,TypeScript, Zod
       2. DataBase: MongoDB and Mongoose 
       3. Tools: EsLint,Prettieer
       4. FrontEnd : Not yet now (can be intefrated later)
@@ -49,9 +49,60 @@ This project is an Express application with TypeScript,integrating MongoDB with 
     1.npm install 
 
 # 3. Set up Environment variables create a .env file in the root directory and include the following 
-  1.port=5000;
-  2.MONGO_URI=mongodb://localhost:27017
+    1.port=5000;
+    2.MONGO_URI=mongodb://localhost:27017
 
 # 4. Run the application start the server in development mode 
- 1.npm run dev 
+    1.npm run dev 
 
+
+
+# Check API end point 
+   # 1. Car 
+       - EndPoint: POST - /api/cars
+       - Request Body 
+       - {
+  "brand": "Toyota",
+  "model": "Camry",
+  "year": 2024,
+  "price": 25000,
+  "category": "Sedan",
+  "description": "A reliable family sedan with modern features.",
+  "quantity": 50,
+  "inStock": true
+}
+- Response : Sucess message when its sucessfully created and created bicycel details 
+ # 2. Get All Car 
+ - EndPoint : GET /api/cars
+ - A list of cars data 
+
+ # 3. Get Specific car 
+   - EndPoint : GET /api/cars/:carsId
+   - Response  : Details the specific car 
+
+# 4. Update Car 
+  - EndPoint : PUT /api/cars/:carsId
+  - Requset Body : if you want update feild 
+  - Response : Sucess message with update Cars data 
+
+# 5. Delete Car
+ - Endpoint : DELETE /api/cars/:carsID
+ - Response : Sucess message for deltetion 
+
+# Orders 
+  1. place an order -EndPoint : POST /api/orders 
+  2. Request Body - {
+"email": "customer@example.com",
+"product": "648a45e5f0123c45678d9012",
+"quantity": 2,
+"totalPrice": 600
+}
+3. Response : Sucess Message with order details 
+
+2. Calculate Revenue 
+  1- Endpoint : /api/orders/revenue
+  2-response : Total revenue from all orders 
+
+
+  # If you want Contact me
+  - iftakharalamshuvo11@gmail.com
