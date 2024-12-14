@@ -61,16 +61,8 @@ This project is an Express application with TypeScript,integrating MongoDB with 
    # 1. Car 
        - EndPoint: POST - /api/cars
        - Request Body 
-       - {
-  "brand": "Toyota",
-  "model": "Camry",
-  "year": 2024,
-  "price": 25000,
-  "category": "Sedan",
-  "description": "A reliable family sedan with modern features.",
-  "quantity": 50,
-  "inStock": true
-}
+       - { "brand": "Toyota",  "model": "Camry",  "year": 2024,  "price": 25000,  "category": "Sedan",  description": "A reliable family sedan with modern features.",  "quantity": 50,  "inStock": true}
+
 - Response : Sucess message when its sucessfully created and created bicycel details 
  # 2. Get All Car 
  - EndPoint : GET /api/cars
