@@ -5,9 +5,18 @@ const createCars = async (payLoad: iCars): Promise<iCars> => {
   const result = await Cars.create(payLoad)
   return result
 }
-
-const getCars = async () => {
-  const result = await Cars.find()
+const getCars = async (searchTerm?: string): Promise<iCars[]> => {
+  // Define the filter object
+  const filter: {
+    $or?: { brand?: RegExp; model?: RegExp; category?: RegExp }[]
+  } = {}
+  // Add $or condition for searchTerm matching specific fields
+  if (searchTerm) {
+    const regex = new RegExp(searchTerm, 'i')
+    filter.$or = [{ brand: regex }, { model: regex }, { category: regex }]
+  }
+  // Query the database
+  const result = await Cars.find(filter)
   return result
 }
 

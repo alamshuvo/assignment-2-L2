@@ -1,5 +1,3 @@
-import { Model } from 'mongoose'
-
 export default interface iOrder {
   email: string
   car: string

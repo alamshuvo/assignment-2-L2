@@ -16,10 +16,7 @@ const carsValidationSchema = z.object({
     .min(1886, 'Year must be 1886 or later') // Minimum year for modern cars
     .max(new Date().getFullYear(), 'Year cannot be in the future'),
   price: z.number().positive('Price must be a positive number').min(0),
-  category: z.enum(
-    ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible'],
-    'Invalid category'
-  ),
+  category: z.enum(['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible']),
   description: z.string().min(5, 'Description is required'),
   quantity: z
     .number()

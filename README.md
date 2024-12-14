@@ -1,7 +1,8 @@
 # Car Store Management system
 
 This project is an Express application with TypeScript,integrating MongoDB with mongoose to manage a Car Store.Ensure  data integrity using mongoose schema validation and also use zod validation.
-
+## Live Link 
+- https://cars-backend-pearl.vercel.app/
 # Car Management 
 - Add new car with details like name,brand ,type,price and stock details
 - Retrieve all Car 
@@ -67,6 +68,8 @@ This project is an Express application with TypeScript,integrating MongoDB with 
  # 2. Get All Car 
  - EndPoint : GET /api/cars
  - A list of cars data 
+ - EndPoint : GET api/cars?searchTerm= " "
+ - you can find specific model ,brand , name you find same data 
 
  # 3. Get Specific car 
    - EndPoint : GET /api/cars/:carsId

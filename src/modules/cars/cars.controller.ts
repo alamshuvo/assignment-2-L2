@@ -20,7 +20,8 @@ const createCars = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAllCars = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await carsServices.getCars()
+    const { searchTerm } = req.query
+    const result = await carsServices.getCars(searchTerm as string)
     res.json({
       message: 'Car retrieved sucessfully',
       sucess: true,

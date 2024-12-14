@@ -1,11 +1,8 @@
-import {  NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { orderServices } from './order.services'
 import orderValidationSchema from './order.validation'
 
-const createOrder = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const orderData = req.body
     const zodParseData = orderValidationSchema.parse(orderData)
@@ -34,27 +31,25 @@ const createOrder = async (
   }
 }
 
-
 const calculateRevenue = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const revenue = await orderServices.calculateRevenue()
-  
-      res.status(200).json({
-        message: 'Revenue calculated successfully',
-        status: true,
-        data: revenue,
-      })
-    } catch (error: unknown) {
-      res.status(500).json({
-        message: 'Failed to calculate revenue',
-        status: false,
-        error: error instanceof Error ? error.message : 'Internal Server Error',
-      })
-    }
-  }
+  try {
+    const revenue = await orderServices.calculateRevenue()
 
+    res.status(200).json({
+      message: 'Revenue calculated successfully',
+      status: true,
+      data: revenue,
+    })
+  } catch (error: unknown) {
+    res.status(500).json({
+      message: 'Failed to calculate revenue',
+      status: false,
+      error: error instanceof Error ? error.message : 'Internal Server Error',
+    })
+  }
+}
 
 export const OrderController = {
   createOrder,
-  calculateRevenue
+  calculateRevenue,
 }

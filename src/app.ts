@@ -26,7 +26,6 @@ app.all('*', (req: Request, res: Response) => {
 
 //global error handeler
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
-  console.log(error)
   if (error) {
     res.status(404).json({
       message: 'validation failed',
