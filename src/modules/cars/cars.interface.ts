@@ -1,10 +1,10 @@
-export default interface iCars{
-    brand:string,
-    model:string,
-    year:number,
-    price:number,
-    category:string,
-    description:string,
-    quantity:number,
-    inStock:boolean
+export default interface iCars {
+  brand: string
+  model: string
+  year: number
+  price: number
+  category: string
+  description: string
+  quantity: number
+  inStock: boolean
 }
