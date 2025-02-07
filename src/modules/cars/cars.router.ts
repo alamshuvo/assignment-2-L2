@@ -1,11 +1,13 @@
 import { Router } from 'express'
 import { carsController } from './cars.controller'
+import validateRequest from '../../middleWare/validateRequest'
+import { carsValidation } from './cars.validation'
 
 const carsRouter = Router()
-carsRouter.post('/api/cars', carsController.createCars)
-carsRouter.get('/api/cars', carsController.getAllCars)
-carsRouter.get('/api/cars/:carId', carsController.getSingleCar)
-carsRouter.put('/api/cars/:carId', carsController.getUpdateCar)
-carsRouter.delete('/api/cars/:carId', carsController.deleteCar)
+carsRouter.post('/',validateRequest(carsValidation.carsValidationSchema), carsController.createCars)
+carsRouter.get('/', carsController.getAllCars)
+carsRouter.get('/:carId', carsController.getSingleCar)
+carsRouter.patch('/:carId',validateRequest(carsValidation.updateCarsValidationSchema), carsController.getUpdateCar)
+carsRouter.delete('/:carId', carsController.deleteCar)
 
 export default carsRouter

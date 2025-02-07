@@ -1,12 +1,17 @@
-import express, { NextFunction, Request, Response } from 'express'
-import carsRouter from './modules/cars/cars.router'
-import orderRouter from './modules/order/order.router'
+import express, { Application, NextFunction, Request, Response } from 'express'
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import router from './routes'
+import globalErrorHandler from './middleWare/globalErrorHandler'
+import notFoundRoute from './middleWare/middleWare'
 
-const app = express()
-app.use(express.json())
+const app:Application = express()
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({origin:['http://localhost:5173'],credentials:true}))
 
-app.use('/', carsRouter)
-app.use('/', orderRouter)
+app.use('/api', router)
+
 
 app.get('/', (req: Request, res: Response) => {
   res.send({
@@ -15,26 +20,12 @@ app.get('/', (req: Request, res: Response) => {
   })
 })
 
-//not found error
 
-app.all('*', (req: Request, res: Response) => {
-  res.status(400).json({
-    message: 'route is not found',
-    sucess: false,
-  })
-})
+
 
 //global error handeler
-app.use((error: any, req: Request, res: Response, next: NextFunction) => {
-  if (error) {
-    res.status(404).json({
-      message: 'validation failed',
-      sucess: false,
-      errors: error,
-      stacks: error.stack.split('\n'),
-    })
-  }
-  next()
-})
+app.use(globalErrorHandler)
+//not found error
+app.use(notFoundRoute)
 
 export default app

@@ -1,90 +1,71 @@
-import { NextFunction, Request, Response } from 'express'
 import { carsServices } from './cars.services'
-import carsValidationSchema from './cars.validation'
+import { catchAsync } from '../../utils/catchAsync'
+import sendResponse from '../../utils/sendResponse';
+import { StatusCodes } from 'http-status-codes';
 
-const createCars = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const payload = req.body
-    const zodParseData = carsValidationSchema.parse(payload)
 
-    const result = await carsServices.createCars(zodParseData)
-    res.json({
-      message: 'Car created sucessfully',
-      sucess: true,
-      data: result,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+const createCars = catchAsync(async(req,res)=>{
+  const result = await carsServices.createCars(req.body);
+  sendResponse(res,{
+    statusCode:StatusCodes.CREATED,
+    sucess:true,
+    message:"Cars Created Sucessfylly",
+    data:result
+  })
+})
+const getAllCars = catchAsync(async(req,res)=>{
+  const {searchTerm} =req.query;
+  const result = await carsServices.getCars(searchTerm as string)
+  sendResponse(res,{
+   statusCode:StatusCodes.OK,
+   sucess:true,
+   message:"Cars retrived Sucessfully",
+   data:result
+  })
+})
 
-const getAllCars = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { searchTerm } = req.query
-    const result = await carsServices.getCars(searchTerm as string)
-    res.json({
-      message: 'Car retrieved sucessfully',
-      sucess: true,
-      data: result,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
 
 // get single car
-const getSingleCar = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const carId = req.params.carId
-    const result = await carsServices.getSingleCars(carId)
-    res.json({
-      message: 'Car retrieved successfully',
-      sucess: true,
-      data: result,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+const getSingleCar = catchAsync(async(req,res)=>{
+  const carId = req.params.carId
+  const result = await carsServices.getSingleCars(carId)
+  sendResponse(res,{
+   statusCode:StatusCodes.OK,
+   sucess:true,
+   message:"Single Cars retrived Sucessfully",
+   data:result
+  })
+})
+
 
 // get update a  car
-const getUpdateCar = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const carId = req.params.carId
-    const payload = req.body
-    const result = await carsServices.getUpdateCars(carId, payload)
-    res.json({
-      message: 'Car updated successfully',
-      sucess: true,
-      data: result,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+const getUpdateCar = catchAsync(async(req,res)=>{
+  const carId = req.params.carId
+  const payload = req.body
+  const result = await carsServices.getUpdateCars(carId, payload)
+  sendResponse(res,{
+   statusCode:StatusCodes.OK,
+   sucess:true,
+   message:"Single Cars Update Sucessfully",
+   data:result
+  })
+})
+
+
 
 // get delete car
-const deleteCar = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const carId = req.params.carId
+const deleteCar = catchAsync(async(req,res)=>{
+  const carId = req.params.carId
     const result = await carsServices.deleteCars(carId)
-    res.json({
-      message: 'Car deleted sucessfully',
-      status: true,
-      data: result,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+  sendResponse(res,{
+   statusCode:StatusCodes.OK,
+   sucess:true,
+   message:"Single Cars Update Sucessfully",
+   data:result
+  })
+})
+
+
 export const carsController = {
   createCars,
   getAllCars,
