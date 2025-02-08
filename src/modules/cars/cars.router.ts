@@ -9,7 +9,7 @@ const carsRouter = Router()
 carsRouter.post('/',validateRequest(carsValidation.carsValidationSchema), carsController.createCars)
 carsRouter.get('/', carsController.getAllCars)
 carsRouter.get('/:carId', carsController.getSingleCar)
-carsRouter.patch('/:carId',validateRequest(carsValidation.updateCarsValidationSchema), carsController.getUpdateCar)
-carsRouter.delete('/:carId',auth(USER_ROLE.admin,USER_ROLE.admin), carsController.deleteCar)
+carsRouter.patch('/:carId',auth(USER_ROLE.admin),validateRequest(carsValidation.updateCarsValidationSchema), carsController.getUpdateCar)
+carsRouter.delete('/:carId',auth(USER_ROLE.admin), carsController.deleteCar)
 
 export default carsRouter

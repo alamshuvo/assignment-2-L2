@@ -5,6 +5,7 @@ import { USER_ROLE } from "./user.const"
 
 export interface TUser {
     name:string,
+    id:string,
     email:string,
     password:string,
     role:{

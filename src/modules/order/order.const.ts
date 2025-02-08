@@ -1,3 +1,3 @@
-export const status =[
+export const Orderstatus =[
     'pending','cancled','paid'
 ]

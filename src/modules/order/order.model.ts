@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import { status } from './order.const'
+import { Orderstatus } from './order.const'
 
 const orderSchema = new Schema(
   {
@@ -7,13 +7,11 @@ const orderSchema = new Schema(
       type:Schema.Types.ObjectId,
       ref:'User',
       required:[true,"user is required"],
-      unique:true
     },
     car: {
       type: Schema.Types.ObjectId,
       ref:"Cars",
       required:[true,'Cars is required'],
-      unique:true
     },
     quantity: {
       type: Number,
@@ -26,10 +24,10 @@ const orderSchema = new Schema(
     status:{
       type:String,
       enum:{
-        values:status,
+        values:Orderstatus,
         message:`&{value} is not supported`
       },
-      required:[true,"gender is required"]
+      required:[true,"status is required"]
     }
   },
   {

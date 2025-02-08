@@ -4,6 +4,7 @@ import { User } from './user.model'
 import AppError from '../../errors/AppError'
 import { StatusCodes } from 'http-status-codes'
 import { sendImageToCloudinary } from '../../utils/sendImgToClodudinary'
+import { generateUserId } from './user.utils'
 
 const createStudentIntoDB = async (file:any,data: TUser) => {
   const userData: Partial<TUser> = {
@@ -21,7 +22,9 @@ const createStudentIntoDB = async (file:any,data: TUser) => {
     const imageName = `${data?.name} ${data?.role}`
     const {secure_url} = await sendImageToCloudinary(path,imageName)
     userData.profileImage = secure_url
-    
+    const newUserId = await generateUserId("user");
+    userData.id = newUserId
+   
     const result = await User.create([userData], { session })
     if (!result.length) {
       throw new AppError(StatusCodes.BAD_REQUEST, 'failed to create User')

@@ -1,8 +1,12 @@
+import { Types } from "mongoose"
+
+
 export default interface iOrder {
-  email: string
-  car: string
+  user:Types.ObjectId,
+  car:Types.ObjectId,
   quantity: number
-  totalPrice: number
+  totalPrice: number,
+  status:"pending"|"cancled"|"paid"
 }
 
 // export type OrderMethod = {

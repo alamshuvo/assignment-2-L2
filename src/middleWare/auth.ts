@@ -19,8 +19,10 @@ return catchAsync(async(req:Request,res:Response,next:NextFunction)=>{
         if (err) {
             throw new AppError(StatusCodes.UNAUTHORIZED,"you are not authorized")
         }
-        const {email,role} = decode as JwtPayload;
-        const user = await User.isUserExistsByEmail(email);
+      
+        const {userEmail,role} = decode as JwtPayload;
+      
+        const user = await User.isUserExistsByEmail(userEmail);
         if (!user) {
             throw new AppError(StatusCodes.BAD_REQUEST,"This user is not found")
         }

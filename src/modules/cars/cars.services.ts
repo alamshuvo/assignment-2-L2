@@ -26,7 +26,6 @@ const getCars = async (query: Record<string, unknown>) => {
   const carsQueary = new QueryBuilder(Cars.find(), query)
     .search(carasSearchAbleFeild)
     .filter()
-    .sort()
     .paginate()
     .fields()
   const result = await carsQueary.modelQuery

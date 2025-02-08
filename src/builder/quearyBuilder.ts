@@ -23,11 +23,31 @@ class QueryBuilder<T> {
   }
 
   filter() {
-    const quearyObj = { ...this.query };
-    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
-    excludeFields.forEach((el) => delete quearyObj[el]);
+    const queryObj = { ...this.query };
 
-    this.modelQuery = this.modelQuery.find(quearyObj as FilterQuery<T>);
+    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+    excludeFields.forEach((el) => delete queryObj[el]);
+
+    const filterQuery: FilterQuery<T> = {};
+   
+
+    Object.keys(queryObj).forEach((key) => {
+      if (key.includes('min') || key.includes('max')) {
+        const field = key.replace('min', '').replace('max', '');
+        if (!(filterQuery as any)[field]) (filterQuery as any)[field] = {};
+
+        if (key.startsWith('min')) {
+          filterQuery[field]['$gte'] = Number(queryObj[key]);
+        }
+        if (key.startsWith('max')) {
+          filterQuery[field]['$lte'] = Number(queryObj[key]);
+        }
+      } else {
+        (filterQuery as any)[key] = queryObj[key];
+      }
+    });
+
+    this.modelQuery = this.modelQuery.find(filterQuery);
     return this;
   }
   sort() {
