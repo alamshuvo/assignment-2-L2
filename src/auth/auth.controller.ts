@@ -7,7 +7,6 @@ import { AuthService } from './auth.service'
 const loginUser = catchAsync(async (req, res) => {
   const body = req?.body
   const result = await AuthService.loginUser(body);
-  console.log(result,"login er controller tekhe");
   const { refreshToken, accessToken } = result
   res.cookie('refreshToken', refreshToken, {
     secure: config.node_env === 'production',
