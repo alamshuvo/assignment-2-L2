@@ -23,7 +23,6 @@ const createStudentIntoDB = async (file:any,data: TUser) => {
     userData.profileImage = secure_url
     
     const result = await User.create([userData], { session })
-    console.log(result[0]);
     if (!result.length) {
       throw new AppError(StatusCodes.BAD_REQUEST, 'failed to create User')
     }

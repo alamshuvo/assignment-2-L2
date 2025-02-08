@@ -1,0 +1,1 @@
+  export const carasSearchAbleFeild = ['name','brand','model']

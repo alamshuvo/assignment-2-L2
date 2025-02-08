@@ -14,8 +14,8 @@ const createCars = catchAsync(async(req,res)=>{
   })
 })
 const getAllCars = catchAsync(async(req,res)=>{
-  const {searchTerm} =req.query;
-  const result = await carsServices.getCars(searchTerm as string)
+ 
+  const result = await carsServices.getCars(req?.query)
   sendResponse(res,{
    statusCode:StatusCodes.OK,
    sucess:true,
