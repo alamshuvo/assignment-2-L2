@@ -19,6 +19,9 @@ export interface TUser {
         type:string,
         enum:["in-progress"|"blocked"],
         default:"in-progress"
+    },
+    profileImage?:{
+        type:string
     }
 }
 

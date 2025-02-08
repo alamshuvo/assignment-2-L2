@@ -1,15 +1,19 @@
 import { model, Schema } from 'mongoose'
+import { status } from './order.const'
 
 const orderSchema = new Schema(
   {
-    email: {
-      type: String,
-      required: true,
-      unique: true,
+    user:{
+      type:Schema.Types.ObjectId,
+      ref:'User',
+      required:[true,"user is required"],
+      unique:true
     },
     car: {
-      type: String,
-      required: true,
+      type: Schema.Types.ObjectId,
+      ref:"Cars",
+      required:[true,'Cars is required'],
+      unique:true
     },
     quantity: {
       type: Number,
@@ -19,6 +23,14 @@ const orderSchema = new Schema(
       type: Number,
       required: true,
     },
+    status:{
+      type:String,
+      enum:{
+        values:status,
+        message:`&{value} is not supported`
+      },
+      required:[true,"gender is required"]
+    }
   },
   {
     timestamps: true,

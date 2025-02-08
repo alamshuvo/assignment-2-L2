@@ -1,4 +1,5 @@
-import { z } from "zod";
+import {  z } from "zod";
+import { userStatus } from "./user.const";
 
 const userValidationSchema = z.object({
     body:z.object({
@@ -7,12 +8,19 @@ const userValidationSchema = z.object({
         password:z.string().max(20,{message:"password cannot be more than 20 char"}),
         role:z.enum(['user','admin']).default("user"),
         isDeleted:z.boolean().optional().default(false),
-        status:z.enum(["in-progress","blocked"]).default("in-progress")
+        status:z.enum(["in-progress","blocked"]).default("in-progress"),
+        profileImage:z.string().optional()
 
     })
 })
 
+const changeValidationSchema = z.object({
+    body:z.object({
+        status:z.enum([...userStatus] as [string,...string[]])
+    })
+})
 
 export const UserValidation = {
-    userValidationSchema
+    userValidationSchema,
+    changeValidationSchema
 }

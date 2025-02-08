@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 const carsValidationSchema = z.object({
   body:z.object({
+    name:z.string(),
     brand: z
       .string(),
 
@@ -28,6 +29,7 @@ const carsValidationSchema = z.object({
 
 const updateCarsValidationSchema = z.object({
   body:z.object({
+    name:z.string().optional(),
     brand: z
       .string().optional()
     ,

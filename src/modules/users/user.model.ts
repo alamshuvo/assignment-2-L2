@@ -33,6 +33,9 @@ const userSchema = new Schema<TUser,UserModel>(
       enum: ['in-progress', 'blocked'],
       default: 'in-progress',
     },
+    profileImage:{
+      type:String
+    }
   },
   {
     timestamps: true,
