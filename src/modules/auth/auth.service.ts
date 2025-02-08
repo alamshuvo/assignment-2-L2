@@ -1,9 +1,9 @@
 import { StatusCodes } from 'http-status-codes'
-import AppError from '../errors/AppError'
-import { User } from '../modules/users/user.model'
+import AppError from '../../errors/AppError'
+import { User } from '../users/user.model'
 import { TLoginUser } from './auth.interface'
 import { createToken } from './auth.utils'
-import config from '../config'
+import config from '../../config'
 
 const loginUser = async (payload: TLoginUser) => {
   const userExist = await User.isUserExistsByEmail(payload?.email);

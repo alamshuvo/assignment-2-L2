@@ -2,7 +2,7 @@ import { Router } from "express";
 import carsRouter from "../modules/cars/cars.router";
 import orderRouter from "../modules/order/order.router";
 import { UserRote } from "../modules/users/user.route";
-import { authRoute } from "../auth/auth.route";
+import { authRoute } from "../modules/auth/auth.route";
 
 const router = Router()
 const moduleRoutes =[

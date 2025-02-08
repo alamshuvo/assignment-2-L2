@@ -44,7 +44,31 @@ const changeStatus = async (id: string, payLoad: { status: string }) => {
   const result = await User.findByIdAndUpdate(id, payLoad, { new: true })
   return result
 }
+
+const getAllUser = async()=>{
+  const result = await User.find();
+
+  return result
+}
+
+const getSingleUser = async(id:string)=>{
+  const result = User.findById(id);
+  return result
+}
+const updateUser = async(id:string,data:Partial<TUser>)=>{
+  const result = User.findByIdAndUpdate(id,data,{new:true})
+  return result
+}
+
+const deleteUser = async(id:string)=>{
+  const result = User.findByIdAndDelete(id);
+  return result
+}
 export const userService = {
   createStudentIntoDB,
   changeStatus,
+  getAllUser,
+  getSingleUser,
+  updateUser,
+  deleteUser
 }

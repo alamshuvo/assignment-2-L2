@@ -13,6 +13,14 @@ const userValidationSchema = z.object({
 
     })
 })
+const updateUserValidationSchema =z.object({
+    body:z.object({
+        name:z.string().optional(),
+        email:z.string().optional(),
+        password:z.string().optional(),
+
+    })
+})
 
 const changeValidationSchema = z.object({
     body:z.object({
@@ -22,5 +30,6 @@ const changeValidationSchema = z.object({
 
 export const UserValidation = {
     userValidationSchema,
-    changeValidationSchema
+    changeValidationSchema,
+    updateUserValidationSchema
 }

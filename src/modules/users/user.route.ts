@@ -17,12 +17,15 @@ router.post(
   validateRequest(UserValidation.userValidationSchema),
   UserController.createUser
 )
-
+router.get("/",auth(USER_ROLE.admin),UserController.getAllUser)
+router.get('/:id',auth(USER_ROLE.admin),UserController.getSingleUser)
+router.patch('/update-user/:id',validateRequest(UserValidation.updateUserValidationSchema),UserController.updateUser)
 router.post(
   '/change-status/:id',
   auth(USER_ROLE.admin),
   validateRequest(UserValidation.changeValidationSchema),
   UserController.changeStatus
 )
+router.delete('/delete-user/:id',auth(USER_ROLE.admin),UserController.deleteUser)
 
 export const UserRote = router
