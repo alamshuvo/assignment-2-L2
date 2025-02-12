@@ -6,6 +6,7 @@ import { createToken, verifyToken } from './auth.utils'
 import config from '../../config'
 import { JwtPayload } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import { sendEmail } from '../../utils/sendEmail'
 const loginUser = async (payload: TLoginUser) => {
   const userExist = await User.isUserExistsByEmail(payload?.email);
 
@@ -100,8 +101,26 @@ return {accessToken}
 
 }
 
+const forgetPassword =async(email:string)=>{
+  const user = await User.isUserExistsByEmail(email)
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND,"This user is not found")
+  }
+  const userStatus = user?.status.type;
+  if (userStatus === 'blocked') {
+    throw new AppError(StatusCodes.FORBIDDEN,"This user is blocked !!")
+  }
+  const jwtPayload = {
+    userEmail : user.email,
+    role:user.role
+  }
+  const resetToken = createToken(jwtPayload,config.jwt_access_secret as string,'15m')
+  const resetUiLink = `${config.reset_Password_ui_link}?email=${user.email}&token=${resetToken}`;
+  sendEmail(user?.email,resetUiLink)
+}
 export const AuthService = {
   loginUser,
   changePassword,
-  refreshToken
+  refreshToken,
+  forgetPassword
 }
