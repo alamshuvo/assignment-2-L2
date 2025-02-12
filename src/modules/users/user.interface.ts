@@ -8,6 +8,7 @@ export interface TUser {
     id:string,
     email:string,
     password:string,
+    passwordChangeAt?:{type:Date},
     role:{
         type:string,
         enum:["user"|"admin"]

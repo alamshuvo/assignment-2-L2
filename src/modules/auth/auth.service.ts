@@ -2,7 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 import AppError from '../../errors/AppError'
 import { User } from '../users/user.model'
 import { TLoginUser } from './auth.interface'
-import { createToken } from './auth.utils'
+import { createToken, verifyToken } from './auth.utils'
 import config from '../../config'
 import { JwtPayload } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
@@ -73,7 +73,35 @@ return null
 
 }
 
+const refreshToken = async(token:string)=>{
+  // checking if the given token is valid
+  const decode = verifyToken(token,config.jwt_refresh_secret as string) as JwtPayload;
+  const {userEmail,iat,} = decode;
+  // checking if the user is exist 
+  const user = await User.isUserExistsByEmail(userEmail)
+if (!user) {
+  throw new AppError(StatusCodes.NOT_FOUND,"this user is not found")
+
+}
+const userStatus = user?.status?.type;
+if (userStatus==='blocked') {
+  throw new AppError(StatusCodes.FORBIDDEN,"this user is blocked")
+
+}
+if (user.passwordChangeAt && User.isJWTIssuedBeforePasswordChange(user?.passwordChangeAt.type,iat as number)) {
+  throw new AppError(StatusCodes.UNAUTHORIZED,'you are not authorized !')
+}
+const jwtPayload = {
+  userEmail:user.email,
+  role:user.role
+}
+const accessToken = createToken(jwtPayload,config.jwt_access_secret as string,config.jwt_expires_in as string)
+return {accessToken}
+
+}
+
 export const AuthService = {
   loginUser,
-  changePassword
+  changePassword,
+  refreshToken
 }
