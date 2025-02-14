@@ -1,12 +1,11 @@
-import { Types } from "mongoose"
-
+import { Types } from 'mongoose'
 
 export default interface iOrder {
-  user:Types.ObjectId,
-  car:Types.ObjectId,
+  user: Types.ObjectId
+  car: Types.ObjectId
   quantity: number
-  totalPrice: number,
-  status:"pending"|"cancled"|"paid"
+  totalPrice: number
+  status: 'pending' | 'cancled' | 'paid'
 }
 
 // export type OrderMethod = {

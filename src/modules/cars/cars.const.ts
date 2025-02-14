@@ -1,1 +1,1 @@
-  export const carasSearchAbleFeild = ['name','brand','category']
+export const carasSearchAbleFeild = ['name', 'brand', 'category']

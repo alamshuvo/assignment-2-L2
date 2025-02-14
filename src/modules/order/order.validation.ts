@@ -1,9 +1,8 @@
 import { z } from 'zod'
 import { Orderstatus } from './order.const'
 
-
 const orderValidationSchema = z.object({
-  body:z.object({
+  body: z.object({
     user: z.string(),
     car: z.string(),
     quantity: z
@@ -21,17 +20,18 @@ const orderValidationSchema = z.object({
       })
       .min(0, 'Total price must be at least 0')
       .nonnegative('Total price must be non-negative'),
-    status: z.enum(["pending","cancled","paid"], {
+    status: z.enum(['pending', 'cancled', 'paid'], {
       errorMap: () => ({ message: 'Invalid status value' }),
     }),
-  })
+  }),
 })
 
 const orderValidationUpdateSchema = z.object({
-  body:z.object({
-   status:z.enum([...Orderstatus]as [string,...string[]])
-  })
+  body: z.object({
+    status: z.enum([...Orderstatus] as [string, ...string[]]),
+  }),
 })
-export const orderValidation ={
-  orderValidationSchema,orderValidationUpdateSchema
+export const orderValidation = {
+  orderValidationSchema,
+  orderValidationUpdateSchema,
 }

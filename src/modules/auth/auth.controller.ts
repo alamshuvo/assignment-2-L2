@@ -6,55 +6,57 @@ import { AuthService } from './auth.service'
 
 const loginUser = catchAsync(async (req, res) => {
   const body = req?.body
-  const result = await AuthService.loginUser(body);
+  const result = await AuthService.loginUser(body)
   const { refreshToken, accessToken } = result
   res.cookie('refreshToken', refreshToken, {
     secure: config.node_env === 'production',
     httpOnly: true,
   })
-  sendResponse(res,{
-    statusCode:StatusCodes.OK,
-    sucess:true,
-    message:"user is loged in sucessfully",
-    data:{
-        accessToken
-    }
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    sucess: true,
+    message: 'user is loged in sucessfully',
+    data: {
+      accessToken,
+    },
   })
 })
-const changePassword = catchAsync(async(req,res)=>{
-  const body =req.body;
-  const result = await AuthService.changePassword(req.user,body)
-  sendResponse(res,{
-    statusCode:StatusCodes.OK,
-    sucess:true,
-    message:'user change password sucesssfully',
-    data:null
+const changePassword = catchAsync(async (req, res) => {
+  const body = req.body
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const result = await AuthService.changePassword(req.user, body)
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    sucess: true,
+    message: 'user change password sucesssfully',
+    data: null,
   })
 })
-const refreshToken = catchAsync(async(req,res)=>{
-  const {refreshToken} = req.cookies;
+const refreshToken = catchAsync(async (req, res) => {
+  const { refreshToken } = req.cookies
   const result = await AuthService.refreshToken(refreshToken)
-  sendResponse(res,{
-    statusCode:StatusCodes.OK,
-    sucess:true,
-    message:"Acess token is retirived sucessfully",
-    data:result
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    sucess: true,
+    message: 'Acess token is retirived sucessfully',
+    data: result,
   })
 })
 
-const forgetPassword = catchAsync(async(req,res)=>{
-  const userEmail = req.body.email;
-  const result = await AuthService.forgetPassword(userEmail);
-  sendResponse(res,{statusCode:StatusCodes.OK,sucess:true,message:"forget password link is sent to your email",data:result})
+const forgetPassword = catchAsync(async (req, res) => {
+  const userEmail = req.body.email
+  const result = await AuthService.forgetPassword(userEmail)
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    sucess: true,
+    message: 'forget password link is sent to your email',
+    data: result,
+  })
 })
-
-
 
 export const authController = {
-    loginUser,
-    changePassword,
-    refreshToken,
-    forgetPassword
-    
-    
+  loginUser,
+  changePassword,
+  refreshToken,
+  forgetPassword,
 }

@@ -1,5 +1,5 @@
 export default interface iCars {
-  name:string,
+  name: string
   brand: string
   model: string
   year: number

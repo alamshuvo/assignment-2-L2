@@ -1,70 +1,64 @@
 import { carsServices } from './cars.services'
 import { catchAsync } from '../../utils/catchAsync'
-import sendResponse from '../../utils/sendResponse';
-import { StatusCodes } from 'http-status-codes';
+import sendResponse from '../../utils/sendResponse'
+import { StatusCodes } from 'http-status-codes'
 
-
-const createCars = catchAsync(async(req,res)=>{
-  const result = await carsServices.createCars(req.body);
-  sendResponse(res,{
-    statusCode:StatusCodes.CREATED,
-    sucess:true,
-    message:"Cars Created Sucessfylly",
-    data:result
+const createCars = catchAsync(async (req, res) => {
+  const result = await carsServices.createCars(req.body)
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    sucess: true,
+    message: 'Cars Created Sucessfylly',
+    data: result,
   })
 })
-const getAllCars = catchAsync(async(req,res)=>{
-  const result = await carsServices.getCars(req?.query);
-  console.log(result);
-  sendResponse(res,{
-   statusCode:StatusCodes.OK,
-   sucess:true,
-   message:"Cars retrived Sucessfully",
-   data:result
+const getAllCars = catchAsync(async (req, res) => {
+  const result = await carsServices.getCars(req?.query)
+  console.log(result)
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    sucess: true,
+    message: 'Cars retrived Sucessfully',
+    data: result,
   })
 })
-
 
 // get single car
-const getSingleCar = catchAsync(async(req,res)=>{
+const getSingleCar = catchAsync(async (req, res) => {
   const carId = req.params.carId
   const result = await carsServices.getSingleCars(carId)
-  sendResponse(res,{
-   statusCode:StatusCodes.OK,
-   sucess:true,
-   message:"Single Cars retrived Sucessfully",
-   data:result
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    sucess: true,
+    message: 'Single Cars retrived Sucessfully',
+    data: result,
   })
 })
 
-
 // get update a  car
-const getUpdateCar = catchAsync(async(req,res)=>{
+const getUpdateCar = catchAsync(async (req, res) => {
   const carId = req.params.carId
   const payload = req.body
   const result = await carsServices.getUpdateCars(carId, payload)
-  sendResponse(res,{
-   statusCode:StatusCodes.OK,
-   sucess:true,
-   message:"Single Cars Update Sucessfully",
-   data:result
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    sucess: true,
+    message: 'Single Cars Update Sucessfully',
+    data: result,
   })
 })
-
-
 
 // get delete car
-const deleteCar = catchAsync(async(req,res)=>{
+const deleteCar = catchAsync(async (req, res) => {
   const carId = req.params.carId
-    const result = await carsServices.deleteCars(carId)
-  sendResponse(res,{
-   statusCode:StatusCodes.OK,
-   sucess:true,
-   message:"Single Cars Update Sucessfully",
-   data:result
+  const result = await carsServices.deleteCars(carId)
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    sucess: true,
+    message: 'Single Cars Update Sucessfully',
+    data: result,
   })
 })
-
 
 export const carsController = {
   createCars,

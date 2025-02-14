@@ -4,7 +4,6 @@ import Cars from '../cars/cars.model'
 import iOrder from './order.interface'
 import Order from './order.model'
 
-
 const createOrder = async (payLoad: iOrder) => {
   //   const result = await Order.create(payLoad)
 
@@ -46,7 +45,9 @@ const calculateRevenue = async (): Promise<{ totalRevenue: number }> => {
       $group: {
         _id: null, // Group all documents together
         totalRevenue: {
-          $sum: { $multiply: ['$quantity', { $ifNull: ['$carDetails.price', 0] }] }, 
+          $sum: {
+            $multiply: ['$quantity', { $ifNull: ['$carDetails.price', 0] }],
+          },
         },
       },
     },
@@ -56,10 +57,10 @@ const calculateRevenue = async (): Promise<{ totalRevenue: number }> => {
         totalRevenue: 1,
       },
     },
-  ]);
+  ])
 
-  return result.length > 0 ? result[0] : { totalRevenue: 0 };
-};
+  return result.length > 0 ? result[0] : { totalRevenue: 0 }
+}
 
 const getOrder = async () => {
   const result = await Order.find().populate('user').populate('car')
@@ -67,22 +68,25 @@ const getOrder = async () => {
 }
 
 const changeStatus = async (id: string, data: { status: string }) => {
-  const updatedData = await Order.findById({_id:id});
+  const updatedData = await Order.findById({ _id: id })
   if (updatedData?.status === 'paid' || updatedData?.status === 'cancled') {
-    throw new AppError(StatusCodes.BAD_REQUEST,"you can not change status after you change status one time")
+    throw new AppError(
+      StatusCodes.BAD_REQUEST,
+      'you can not change status after you change status one time'
+    )
   }
   const result = await Order.findByIdAndUpdate(id, data, { new: true })
   return result
 }
 
-const deleteOrder = async(id:string)=>{
- const deleteOrder = await Order.findByIdAndDelete(id)
- return deleteOrder
+const deleteOrder = async (id: string) => {
+  const deleteOrder = await Order.findByIdAndDelete(id)
+  return deleteOrder
 }
 export const orderServices = {
   createOrder,
   calculateRevenue,
   getOrder,
   changeStatus,
-  deleteOrder
+  deleteOrder,
 }

@@ -5,13 +5,12 @@ import router from './routes'
 import globalErrorHandler from './middleWare/globalErrorHandler'
 import notFoundRoute from './middleWare/middleWare'
 
-const app:Application = express()
-app.use(express.json());
-app.use(cookieParser());
-app.use(cors({origin:['http://localhost:5173'],credentials:true}))
+const app: Application = express()
+app.use(express.json())
+app.use(cookieParser())
+app.use(cors({ origin: ['http://localhost:5173'], credentials: true }))
 
 app.use('/api', router)
-
 
 app.get('/', (req: Request, res: Response) => {
   res.send({
@@ -19,9 +18,6 @@ app.get('/', (req: Request, res: Response) => {
     message: 'Car Server Live',
   })
 })
-
-
-
 
 //global error handeler
 app.use(globalErrorHandler)
