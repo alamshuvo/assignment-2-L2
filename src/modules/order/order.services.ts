@@ -41,9 +41,19 @@ const createOrder = async (
 
   let totalPrice = 0
   const productDetails = await Promise.all(
-    products.map(async (item:any) => {
+    products.map(async (item: any) => {
       const product = await Cars.findById(item.car)
-
+      if (!product) {
+        throw new AppError(StatusCodes.NOT_FOUND, 'Car not found')
+      }
+      if (product.quantity<item.quantity) {
+        throw new AppError(StatusCodes.BAD_REQUEST,`not enough stock available for ${product?.name}`)
+      }
+      product.quantity -= item.quantity
+      if (product.quantity === 0) {
+        product.inStock= false
+      }
+      await product.save()
       if (product) {
         const subtotal = product ? (product.price || 0) * item.quantity : 0
         totalPrice += subtotal
@@ -51,7 +61,9 @@ const createOrder = async (
       }
     })
   )
-
+ if (totalPrice === 0 ) {
+  throw new AppError(StatusCodes.BAD_REQUEST,"no product available for ordering")
+ }
   const order = {
     user: payload?.user, // Use only the ObjectId here, not the whole payload
     car: productDetails,
@@ -150,7 +162,7 @@ const createOrder = async (
 
 const verifyPayment = async (order_id: string) => {
   const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id)
- 
+
   if (verifiedPayment.length) {
     const paymentDetails = verifiedPayment[0]
 
