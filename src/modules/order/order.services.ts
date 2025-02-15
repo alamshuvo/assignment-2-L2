@@ -1,66 +1,163 @@
 import { StatusCodes } from 'http-status-codes'
 import AppError from '../../errors/AppError'
 import Cars from '../cars/cars.model'
-import iOrder from './order.interface'
-import Order from './order.model'
+import { JwtPayload } from 'jsonwebtoken'
+import { Order } from './order.model'
+import { TUser } from '../users/user.interface'
+import { orderUtils } from './order.utils'
 
-const createOrder = async (payLoad: iOrder) => {
-  //   const result = await Order.create(payLoad)
 
-  const { car, quantity } = payLoad
+// const createOrder = async (user:TUser,payLoad: iOrder) => {
+//   //   const result = await Order.create(payLoad)
 
-  const carsData = await Cars.findById(car)
+//   const { car, quantity } = payLoad
 
-  if (!carsData) {
-    throw new AppError(StatusCodes.BAD_REQUEST, 'product not found')
-  }
+//   const carsData = await Cars.findById(car)
 
-  if (carsData.quantity < quantity) {
-    throw new AppError(StatusCodes.BAD_REQUEST, 'Insufficant Product')
-  }
-  carsData.quantity -= quantity
-  carsData.inStock = carsData.quantity > 0
-  await carsData.save()
+//   if (!carsData) {
+//     throw new AppError(StatusCodes.BAD_REQUEST, 'product not found')
+//   }
 
-  const order = (await (await Order.create(payLoad)).populate('user')).populate(
-    'car'
+//   if (carsData.quantity < quantity) {
+//     throw new AppError(StatusCodes.BAD_REQUEST, 'Insufficant Product')
+//   }
+//   carsData.quantity -= quantity
+//   carsData.inStock = carsData.quantity > 0
+//   await carsData.save()
+
+//   const order = (await (await Order.create(payLoad)).populate('user')).populate(
+//     'car'
+//   )
+//   return order
+// }
+const createOrder = async (user:TUser, payload: JwtPayload,client_ip:string) => {
+  
+  if (!payload?.car?.length)
+    throw new AppError(StatusCodes.NOT_ACCEPTABLE, 'Order is not specified')
+
+  const products = payload.car
+
+  let totalPrice = 0
+  const productDetails = await Promise.all(
+    products.map(async (item) => {
+      const product = await Cars.findById(item.car)
+
+      if (product) {
+        const subtotal = product ? (product.price || 0) * item.quantity : 0
+        totalPrice += subtotal
+        return item
+      }
+    })
   )
-  return order
-}
 
+  let order = {
+    user: payload?.user, // Use only the ObjectId here, not the whole payload
+    car: productDetails,
+    quantity: payload.quantity,
+    totalPrice:totalPrice, // Ensure quantity is passed correctly
+    status: payload.status,
+  } // Ensure status is passed as well
+
+  const orderPlace = await Order.create(order)
+  //const userDetails = await User.findById(orderPlace?.user);
+ 
+
+ 
+  // payment integration
+  // const shurjopayPayload = {
+  //   amount: totalPrice,
+  //   order_id: order._id,
+  //   currency: "BDT",
+  //   customer_name: user.name,
+  //   customer_address: user.address,
+  //   customer_email: user.email,
+  //   customer_phone: user.phone,
+  //   customer_city: user.city,
+  //   client_ip,
+  // };
+  const shurjopayPayload = {
+    amount:totalPrice,
+    order_id:orderPlace._id,
+    currency:"BDT",
+    customer_name:user.name,
+    customer_address:"Dhaka Bangladesh",
+    customer_email:user.email,
+    customer_phone:"****0555",
+    customer_city:"Chittagong,Bangladesh",
+    client_ip
+
+  }
+  const payment = await orderUtils.makePaymentAsync(shurjopayPayload)
+
+  // const payment = await orderUtils.makePaymentAsync(shurjopayPayload);
+return { order,payment}
+  // if (payment?.transactionStatus) {
+  //   order = await Order.updateOne({
+  //     transaction: {
+  //       id: payment.sp_order_id,
+  //       transactionStatus: payment.transactionStatus,
+  //     },
+  //   });
+  // }
+
+  // return payment.checkout_url;
+}
+// const calculateRevenue = async (): Promise<{ totalRevenue: number }> => {
+//   const result = await Order.aggregate([
+//     {
+//       $lookup: {
+//         from: 'cars',
+//         localField: 'car',
+//         foreignField: '_id',
+//         as: 'carDetails',
+//       },
+//     },
+//     {
+//       $unwind: '$carDetails',
+//     },
+//     {
+//       $group: {
+//         _id: null, // Group all documents together
+//         totalRevenue: {
+//           $sum: {
+//             $multiply: ['$quantity', { $ifNull: ['$carDetails.price', 0] }],
+//           },
+//         },
+//       },
+//     },
+//     {
+//       $project: {
+//         _id: 0,
+//         totalRevenue: 1,
+//       },
+//     },
+//   ])
+
+//   return result.length > 0 ? result[0] : { totalRevenue: 0 }
+// }
+
+const verifyPayment = async(order_id:string)=>{
+  const verifyPayment = await orderUtils.verifyPaymentAsync(order_id);
+  return verifyPayment
+}
 const calculateRevenue = async (): Promise<{ totalRevenue: number }> => {
   const result = await Order.aggregate([
     {
-      $lookup: {
-        from: 'cars',
-        localField: 'car',
-        foreignField: '_id',
-        as: 'carDetails',
-      },
-    },
-    {
-      $unwind: '$carDetails',
-    },
-    {
       $group: {
         _id: null, // Group all documents together
-        totalRevenue: {
-          $sum: {
-            $multiply: ['$quantity', { $ifNull: ['$carDetails.price', 0] }],
-          },
-        },
-      },
+        totalRevenue: { $sum: "$totalPrice" } // Sum up the totalPrice of all orders
+      }
     },
     {
       $project: {
         _id: 0,
-        totalRevenue: 1,
-      },
-    },
-  ])
+        totalRevenue: 1
+      }
+    }
+  ]);
 
-  return result.length > 0 ? result[0] : { totalRevenue: 0 }
-}
+  return result.length > 0 ? result[0] : { totalRevenue: 0 };
+};
 
 const getOrder = async () => {
   const result = await Order.find().populate('user').populate('car')
@@ -89,4 +186,5 @@ export const orderServices = {
   getOrder,
   changeStatus,
   deleteOrder,
+  verifyPayment
 }

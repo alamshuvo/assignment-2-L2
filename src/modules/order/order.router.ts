@@ -7,7 +7,7 @@ import { USER_ROLE } from '../users/user.const'
 
 const orderRouter = Router()
 orderRouter.post(
-  '/',
+  '/',auth(USER_ROLE.user,USER_ROLE.admin),
   validateRequest(orderValidation.orderValidationSchema),
   OrderController.createOrder
 )
@@ -23,6 +23,7 @@ orderRouter.delete(
   auth(USER_ROLE.admin),
   OrderController.deleteOrder
 )
-orderRouter.get('/revenue', OrderController.calculateRevenue)
+orderRouter.get('/revenue',auth(USER_ROLE.admin), OrderController.calculateRevenue);
+orderRouter.get('/verify',auth(USER_ROLE.user,USER_ROLE.admin),OrderController.verifyPayment)
 
 export default orderRouter

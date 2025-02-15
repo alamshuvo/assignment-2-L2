@@ -1,8 +1,8 @@
 import { orderServices } from './order.services'
 import { catchAsync } from '../../utils/catchAsync'
-import iOrder from './order.interface'
 import sendResponse from '../../utils/sendResponse'
 import { StatusCodes } from 'http-status-codes'
+import { TUser } from '../users/user.interface'
 
 // const createOrder = async (req: Request, res: Response): Promise<void> => {
 //   try {
@@ -34,8 +34,9 @@ import { StatusCodes } from 'http-status-codes'
 // }
 
 const createOrder = catchAsync(async (req, res) => {
-  const orderData = req.body as iOrder
-  const result = await orderServices.createOrder(orderData)
+  const orderData = req.body 
+  const user = req.user as TUser;
+  const result = await orderServices.createOrder(user, orderData,req.ip!)
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
     sucess: true,
@@ -105,10 +106,23 @@ const calculateRevenue = catchAsync(async (req, res) => {
   })
 })
 
+const verifyPayment = catchAsync(async(req,res)=>{
+  const order = await orderServices.verifyPayment(
+    req.query.order_id as string
+  );
+  sendResponse(res,{
+    statusCode:StatusCodes.CREATED,
+    sucess:true,
+    message:"order verified successfully",
+    data:order
+  })
+})
+
 export const OrderController = {
   createOrder,
   calculateRevenue,
   getOrder,
   changeStatus,
   deleteOrder,
+  verifyPayment
 }
