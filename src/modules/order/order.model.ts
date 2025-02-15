@@ -1,8 +1,6 @@
 import { model, Schema } from 'mongoose'
 import { Orderstatus } from './order.const'
 
-
-
 // const orderSchema = new Schema(
 //   {
 //     user: {
@@ -35,7 +33,6 @@ import { Orderstatus } from './order.const'
 // const Order = model('Order', orderSchema)
 // export default Order
 
-
 const orderSchema = new Schema(
   {
     user: {
@@ -44,18 +41,20 @@ const orderSchema = new Schema(
       required: [true, 'user is required'],
     },
     car: {
-      type: [{
-        car: {
-          type: Schema.Types.ObjectId,
-          ref: 'Car',
-          required: true,
+      type: [
+        {
+          car: {
+            type: Schema.Types.ObjectId,
+            ref: 'Car',
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            required: true,
+            min: [1, 'Quantity must be at least 1'],
+          },
         },
-        quantity: {
-          type: Number,
-          required: true,
-          min: [1, 'Quantity must be at least 1'],
-        }
-      }],
+      ],
       required: [true, 'Cars are required'],
     },
     status: {
@@ -64,13 +63,14 @@ const orderSchema = new Schema(
         values: Orderstatus,
         message: `'{VALUE}' is not supported`,
       },
-      required: [true, 'Status is required'],
+      default: 'Pending',
     },
-    totalPrice:{type:Number,required:true}
+    transaction:{id:String,transactionStatus:String,bank_status:String,sp_code:String,sp_message:String,method:String,date_time:String},
+    totalPrice: { type: Number, required: true },
   },
   {
     timestamps: true, // Automatically adds `createdAt` and `updatedAt`
   }
-);
+)
 
-export const Order = model('Order', orderSchema);
+export const Order = model('Order', orderSchema)

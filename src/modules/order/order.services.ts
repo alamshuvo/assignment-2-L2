@@ -6,7 +6,6 @@ import { Order } from './order.model'
 import { TUser } from '../users/user.interface'
 import { orderUtils } from './order.utils'
 
-
 // const createOrder = async (user:TUser,payLoad: iOrder) => {
 //   //   const result = await Order.create(payLoad)
 
@@ -30,8 +29,11 @@ import { orderUtils } from './order.utils'
 //   )
 //   return order
 // }
-const createOrder = async (user:TUser, payload: JwtPayload,client_ip:string) => {
-  
+const createOrder = async (
+  user: TUser,
+  payload: JwtPayload,
+  client_ip: string
+) => {
   if (!payload?.car?.length)
     throw new AppError(StatusCodes.NOT_ACCEPTABLE, 'Order is not specified')
 
@@ -39,7 +41,7 @@ const createOrder = async (user:TUser, payload: JwtPayload,client_ip:string) => 
 
   let totalPrice = 0
   const productDetails = await Promise.all(
-    products.map(async (item) => {
+    products.map(async (item:any) => {
       const product = await Cars.findById(item.car)
 
       if (product) {
@@ -50,19 +52,17 @@ const createOrder = async (user:TUser, payload: JwtPayload,client_ip:string) => 
     })
   )
 
-  let order = {
+  const order = {
     user: payload?.user, // Use only the ObjectId here, not the whole payload
     car: productDetails,
     quantity: payload.quantity,
-    totalPrice:totalPrice, // Ensure quantity is passed correctly
+    totalPrice: totalPrice, // Ensure quantity is passed correctly
     status: payload.status,
   } // Ensure status is passed as well
 
   const orderPlace = await Order.create(order)
   //const userDetails = await User.findById(orderPlace?.user);
- 
 
- 
   // payment integration
   // const shurjopayPayload = {
   //   amount: totalPrice,
@@ -76,21 +76,33 @@ const createOrder = async (user:TUser, payload: JwtPayload,client_ip:string) => 
   //   client_ip,
   // };
   const shurjopayPayload = {
-    amount:totalPrice,
-    order_id:orderPlace._id,
-    currency:"BDT",
-    customer_name:user.name,
-    customer_address:"Dhaka Bangladesh",
-    customer_email:user.email,
-    customer_phone:"****0555",
-    customer_city:"Chittagong,Bangladesh",
-    client_ip
-
+    amount: totalPrice,
+    order_id: orderPlace._id,
+    currency: 'BDT',
+    customer_name: user.name,
+    customer_address: 'Dhaka Bangladesh',
+    customer_email: user.email,
+    customer_phone: '****0555',
+    customer_city: 'Chittagong,Bangladesh',
+    client_ip,
   }
   const payment = await orderUtils.makePaymentAsync(shurjopayPayload)
+  if (payment?.transactionStatus) {
+    await Order.updateOne(
+      { _id: orderPlace._id },
+      {
+        $set: {
+          transaction: {
+            id: payment?.sp_order_id,
+            transactionStatus: payment.transactionStatus,
+          },
+        },
+      }
+    )
+  }
 
   // const payment = await orderUtils.makePaymentAsync(shurjopayPayload);
-return { order,payment}
+
   // if (payment?.transactionStatus) {
   //   order = await Order.updateOne({
   //     transaction: {
@@ -100,7 +112,7 @@ return { order,payment}
   //   });
   // }
 
-  // return payment.checkout_url;
+  return payment.checkout_url
 }
 // const calculateRevenue = async (): Promise<{ totalRevenue: number }> => {
 //   const result = await Order.aggregate([
@@ -136,28 +148,55 @@ return { order,payment}
 //   return result.length > 0 ? result[0] : { totalRevenue: 0 }
 // }
 
-const verifyPayment = async(order_id:string)=>{
-  const verifyPayment = await orderUtils.verifyPaymentAsync(order_id);
-  return verifyPayment
+const verifyPayment = async (order_id: string) => {
+  const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id)
+ 
+  if (verifiedPayment.length) {
+    const paymentDetails = verifiedPayment[0]
+
+    await Order.findOneAndUpdate(
+      {
+        'transaction.id': order_id,
+      },
+      {
+        'transaction.bank_status': paymentDetails.bank_status,
+        'transaction.sp_code': paymentDetails.sp_code,
+        'transaction.sp_message': paymentDetails.sp_message,
+        'transaction.method': paymentDetails.method,
+        'transaction.transaction_status': paymentDetails.transaction_status,
+        'transaction.date_time': paymentDetails.date_time,
+        status:
+          verifiedPayment[0].bank_status == 'Success'
+            ? 'Paid'
+            : verifiedPayment[0].bank_status == 'Failed'
+              ? 'Pending'
+              : verifiedPayment[0].bank_status == 'Cancel'
+                ? 'Cancelled'
+                : '',
+      }
+    )
+  }
+
+  return verifiedPayment
 }
 const calculateRevenue = async (): Promise<{ totalRevenue: number }> => {
   const result = await Order.aggregate([
     {
       $group: {
         _id: null, // Group all documents together
-        totalRevenue: { $sum: "$totalPrice" } // Sum up the totalPrice of all orders
-      }
+        totalRevenue: { $sum: '$totalPrice' }, // Sum up the totalPrice of all orders
+      },
     },
     {
       $project: {
         _id: 0,
-        totalRevenue: 1
-      }
-    }
-  ]);
+        totalRevenue: 1,
+      },
+    },
+  ])
 
-  return result.length > 0 ? result[0] : { totalRevenue: 0 };
-};
+  return result.length > 0 ? result[0] : { totalRevenue: 0 }
+}
 
 const getOrder = async () => {
   const result = await Order.find().populate('user').populate('car')
@@ -186,5 +225,5 @@ export const orderServices = {
   getOrder,
   changeStatus,
   deleteOrder,
-  verifyPayment
+  verifyPayment,
 }
