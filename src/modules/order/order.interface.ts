@@ -8,18 +8,19 @@ import { Types } from 'mongoose'
 // }
 
 export default interface iOrder {
-  user: Types.ObjectId // Reference to User model
+  user:{
+    id: Types.ObjectId
+  }, // Reference to User model
   car: { car: Types.ObjectId; quantity: number }[] // Array of objects with car ID and quantity
-  status: 'Pending' | 'Paid' | 'Shipped' | 'Completed' | 'Cancelled' // Order status
+  status?: 'Pending' | 'Paid' | 'Shipped' | 'Completed' | 'Cancelled' // Order status
   transaction?: {
-    id: string,
-    transactionStatus:string,
-    bank_status:string,
-    sp_code:string,
-    sp_message:string,
-    method:string,
-    date_time:string
-
+    id: string
+    transactionStatus: string
+    bank_status: string
+    sp_code: string
+    sp_message: string
+    method: string
+    date_time: string
   }
   totalPrice: number
 }

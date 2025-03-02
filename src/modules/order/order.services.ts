@@ -34,6 +34,7 @@ const createOrder = async (
   payload: JwtPayload,
   client_ip: string
 ) => {
+  console.log(user,payload);
   if (!payload?.car?.length)
     throw new AppError(StatusCodes.NOT_ACCEPTABLE, 'Order is not specified')
 
@@ -161,7 +162,9 @@ const createOrder = async (
 // }
 
 const verifyPayment = async (order_id: string) => {
+  console.log(order_id);
   const verifiedPayment = await orderUtils.verifyPaymentAsync(order_id)
+  console.log(verifiedPayment);
 
   if (verifiedPayment.length) {
     const paymentDetails = verifiedPayment[0]
@@ -211,9 +214,20 @@ const calculateRevenue = async (): Promise<{ totalRevenue: number }> => {
 }
 
 const getOrder = async () => {
-  const result = await Order.find().populate('user').populate('car')
+  const result = await Order.find().populate('car')
   return result
 }
+
+
+const getOrderById  = async(id:string|undefined)=>{
+
+const result = await Order.find({user:id})
+
+return result
+}
+
+
+
 
 const changeStatus = async (id: string, data: { status: string }) => {
   const updatedData = await Order.findById({ _id: id })
@@ -238,4 +252,5 @@ export const orderServices = {
   changeStatus,
   deleteOrder,
   verifyPayment,
+  getOrderById
 }

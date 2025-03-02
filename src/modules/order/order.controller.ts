@@ -35,7 +35,8 @@ import { TUser } from '../users/user.interface'
 
 const createOrder = catchAsync(async (req, res) => {
   const orderData = req.body 
-  const user = req.user as TUser;
+
+  const user = req.user as unknown as TUser;
   const result = await orderServices.createOrder(user, orderData,req.ip!)
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
@@ -51,6 +52,19 @@ const getOrder = catchAsync(async (req, res) => {
     statusCode: StatusCodes.OK,
     sucess: true,
     message: 'all order data are retrived sucessfylly',
+    data: result,
+  })
+})
+
+const getSpecificUserOrder = catchAsync(async (req, res) => {
+  const id = req.query.userId as string;
+  console.log(id);
+  const result = await orderServices.getOrderById(id);
+  console.log(result);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    sucess: true,
+    message: 'single user order data are retrived sucessfylly',
     data: result,
   })
 })
@@ -110,6 +124,7 @@ const verifyPayment = catchAsync(async(req,res)=>{
   const order = await orderServices.verifyPayment(
     req.query.order_id as string
   );
+ 
   sendResponse(res,{
     statusCode:StatusCodes.CREATED,
     sucess:true,
@@ -124,5 +139,7 @@ export const OrderController = {
   getOrder,
   changeStatus,
   deleteOrder,
-  verifyPayment
+  verifyPayment,
+  //getOrderById
+  getSpecificUserOrder
 }

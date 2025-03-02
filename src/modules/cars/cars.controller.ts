@@ -13,13 +13,14 @@ const createCars = catchAsync(async (req, res) => {
   })
 })
 const getAllCars = catchAsync(async (req, res) => {
-  const result = await carsServices.getCars(req?.query)
-  console.log(result)
+  const result = await carsServices.getCars(req?.query);
+  const params = req?.query
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     sucess: true,
     message: 'Cars retrived Sucessfully',
     data: result,
+    meta:params
   })
 })
 
@@ -38,7 +39,8 @@ const getSingleCar = catchAsync(async (req, res) => {
 // get update a  car
 const getUpdateCar = catchAsync(async (req, res) => {
   const carId = req.params.carId
-  const payload = req.body
+  const payload = req.body.updatedCar
+  console.log(carId,payload);
   const result = await carsServices.getUpdateCars(carId, payload)
   sendResponse(res, {
     statusCode: StatusCodes.OK,

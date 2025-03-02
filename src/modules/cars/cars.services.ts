@@ -28,6 +28,7 @@ const getCars = async (query: Record<string, unknown>) => {
     .filter()
     .paginate()
     .fields()
+    .sort()
   const result = await carsQueary.modelQuery
   return result
 }

@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, } from 'mongoose'
 import { Orderstatus } from './order.const'
 
 // const orderSchema = new Schema(
@@ -38,7 +38,7 @@ const orderSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: [true, 'user is required'],
+      required: true
     },
     car: {
       type: [

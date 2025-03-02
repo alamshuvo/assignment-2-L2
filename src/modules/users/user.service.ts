@@ -3,10 +3,11 @@ import { TUser } from './user.interface'
 import { User } from './user.model'
 import AppError from '../../errors/AppError'
 import { StatusCodes } from 'http-status-codes'
-import { sendImageToCloudinary } from '../../utils/sendImgToClodudinary'
-import { generateUserId } from './user.utils'
 
-const createStudentIntoDB = async (file: any, data: TUser) => {
+import { generateUserId } from './user.utils'
+import { JwtPayload } from 'jsonwebtoken'
+
+const createStudentIntoDB = async ( data: TUser) => {
   const userData: Partial<TUser> = {
     name: data?.name,
     email: data?.email,
@@ -18,8 +19,8 @@ const createStudentIntoDB = async (file: any, data: TUser) => {
   const session = await mongoose.startSession()
   try {
     session.startTransaction()
-    const path = file?.path
-    const imageName = `${data?.name} ${data?.role}`
+    // const path = file?.path
+    // const imageName = `${data?.name} ${data?.role}`
     // const a = (await sendImageToCloudinary(
     //   path as string,
     //   imageName
@@ -28,8 +29,8 @@ const createStudentIntoDB = async (file: any, data: TUser) => {
     // userData.profileImage = { type: a?.secure_url as string }
     const newUserId = await generateUserId('user')
     userData.id = newUserId
-    const {secure_url} = await sendImageToCloudinary(path,imageName);
-    userData.profileImage = secure_url;
+    // const {secure_url} = await sendImageToCloudinary(path,imageName);
+    // userData.profileImage = secure_url;
 //     const response = await sendImageToCloudinary(path, imageName)
 //  console.log(response);
 //     if (response && typeof response === 'object' && 'secure_url' in response) {
@@ -78,6 +79,20 @@ const deleteUser = async (id: string) => {
   const result = User.findByIdAndDelete(id)
   return result
 }
+const getMe = async (payload: JwtPayload) => {
+  // const decoded = verifyToken(token, config.jwt_acess_secret as string) as JwtPayload
+
+  const { email, role } = payload;
+  let result = null;
+  if (role === 'admin') {
+    result = await User.findOne({ email: email });
+  }
+  if (role === 'user') {
+    result = await User.findOne({ email: email });
+  }
+  return result;
+};
+
 export const userService = {
   createStudentIntoDB,
   changeStatus,
@@ -85,4 +100,5 @@ export const userService = {
   getSingleUser,
   updateUser,
   deleteUser,
+  getMe
 }

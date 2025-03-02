@@ -37,7 +37,7 @@ const orderValidationSchema = z.object({
     ).nonempty('At least one car is required'),
     status: z.enum(['Pending','Paid','Shipped','Completed','Cancelled'], {
       errorMap: () => ({ message: 'Invalid status value' }),
-    }),
+    }).default('Pending'),
     
     totalPrice:z.number().optional()
   }),

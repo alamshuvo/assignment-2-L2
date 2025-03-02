@@ -1,19 +1,19 @@
-import { NextFunction, Request, Response, Router } from 'express'
+import {  Router } from 'express'
 import validateRequest from '../../middleWare/validateRequest'
 import { UserValidation } from './user.validation'
 import { UserController } from './user.controller'
 import auth from '../../middleWare/auth'
 import { USER_ROLE } from './user.const'
-import { upload } from '../../utils/sendImgToClodudinary'
+//import { upload } from '../../utils/sendImgToClodudinary'
 
 const router = Router()
 router.post(
   '/create-user',
-  upload.single('file'),
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data)
-    next()
-  },
+  // upload.single('file'),
+  // (req: Request, res: Response, next: NextFunction) => {
+  //   req.body = JSON.parse(req.body.data)
+  //   next()
+  // },
   validateRequest(UserValidation.userValidationSchema),
   UserController.createUser
 )
@@ -30,6 +30,7 @@ router.post(
   validateRequest(UserValidation.changeValidationSchema),
   UserController.changeStatus
 )
+router.post("/me",auth(USER_ROLE.user,USER_ROLE.admin),UserController.getMe)
 router.delete(
   '/delete-user/:id',
   auth(USER_ROLE.admin),

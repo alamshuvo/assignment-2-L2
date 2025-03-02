@@ -4,9 +4,9 @@ import sendResponse from '../../utils/sendResponse'
 import { userService } from './user.service'
 
 const createUser = catchAsync(async (req, res) => {
-  const file = req.file
+ 
 
-  const result = await userService.createStudentIntoDB(file, req?.body)
+  const result = await userService.createStudentIntoDB( req?.body)
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,
     sucess: true,
@@ -56,6 +56,20 @@ const updateUser = catchAsync(async (req, res) => {
     data: result,
   })
 })
+
+const getMe = catchAsync(async (req, res) => {
+ 
+    const result = await userService.getMe(req.user);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      sucess: true,
+      message: 'get Me sucessfully',
+      data: result,
+    });
+  });
+
+
+
 const deleteUser = catchAsync(async (req, res) => {
   const id = req?.params.id
   const result = await userService.deleteUser(id)
@@ -73,4 +87,5 @@ export const UserController = {
   getSingleUser,
   updateUser,
   deleteUser,
+  getMe
 }

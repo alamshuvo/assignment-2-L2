@@ -8,4 +8,5 @@ export default interface iCars {
   description: string
   quantity: number
   inStock: boolean
+  image:string
 }

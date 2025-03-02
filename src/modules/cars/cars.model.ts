@@ -39,6 +39,10 @@ const carsSchema = new Schema(
       type: Boolean,
       required: true,
     },
+    image:{
+      type:String,
+      default:""
+    }
   },
   {
     timestamps: true,

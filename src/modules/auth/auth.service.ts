@@ -28,6 +28,7 @@ const loginUser = async (payload: TLoginUser) => {
   const jwtPayload = {
     userEmail: userExist?.email,
     role: userExist?.role,
+    userId: userExist?.id,
   }
   const accessToken = createToken(
     jwtPayload,
@@ -49,7 +50,8 @@ const changePassword = async (
   user: JwtPayload,
   payload: { oldPassword: string; newPassword: string }
 ) => {
-  const userExist = await User.isUserExistsByEmail(user?.userEmail)
+  
+  const userExist = await User.isUserExistsByEmail(user?.email)
   if (!userExist) {
     throw new AppError(
       StatusCodes.NOT_FOUND,
